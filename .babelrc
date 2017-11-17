@@ -1,0 +1,23 @@
+{
+  "presets": [
+    "env",
+    "stage-2"
+  ],
+  "plugins": [
+    "transform-runtime",
+    "transform-class-properties",
+    [
+      "module-resolver",
+      {
+        "root": ["./"],
+        "alias": {
+          "webpack-config": "./webpack/webpack.config",
+          "webpack-utils": "./webpack/utils",
+          "webpack-externals": "./webpack/externals",
+          "webpack-rules": "./webpack/rules",
+          "webpack-plugins": "./webpack/plugins"
+        }
+      }
+    ]
+  ]
+}
