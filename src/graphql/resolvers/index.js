@@ -1,19 +1,22 @@
+'use strict';
+
 /**
- * Resolvers module
- * @module resolvers
+ * Root resolver.
+ * @module
  */
 
-import * as queries from './queries';
-import * as mutations from './mutations';
+const me = require('./me');
+const viewer = require('./viewer');
+const createUser = require('./createUser');
 
-export default {
+module.exports = {
   Query: {
-    viewer: queries.viewer,
+    viewer,
   },
   Mutation: {
-    createUser: mutations.createUser,
+    createUser,
   },
   Viewer: {
-    me: queries.me,
+    me,
   }
 };

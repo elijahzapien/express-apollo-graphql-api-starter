@@ -1,15 +1,18 @@
+'use strict';
+
 /**
- * Authentication controller module.
- * @module controllers/authentication
+ * Authentication controller.
+ * @module
  */
 
-import express from 'express';
-import { check, validationResult } from 'express-validator/check';
-import { matchedData, sanitize } from 'express-validator/filter';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+const debug = require('debug')('Server:Controller:Authentication');
+const express = require('express');
+const { check, validationResult } = require('express-validator/check');
+const { matchedData, sanitize } = require('express-validator/filter');
 
-import User from '../models/user.mock';
+const { createToken } = require('../utils/jwtUtils');
+
+const User = require('../database/models/user');
 
 const AuthenticationRouter = express.Router();
 
@@ -37,66 +40,31 @@ const handlePost = (req, res, next) => {
       .json({ error: errors.mapped() });
   }
 
-  User.findOne({ email: bodyData.email }, (dbErr, user) => {
-    // check for db errors
-    if (dbErr) {
-      return res
-        .status(400)
-        .json({ error: dbErr });
-    }
+  User.authenticateUser(bodyData.email, bodyData.password)
+    .then(({ id, email }) => {
+      const token = createToken({ id, email });
 
-    // check if user exists
-    if (!user) {
-      return res
-        .status(404)
-        .json({ error: 'User not found.' });
-    }
+      return res.json({ token });
+    })
+    .catch(error => {
+      debug(error);
 
-    bcrypt.compare(
-      bodyData.password,
-      user.password,
-      (bcryptErr, bcryptVerified) => {
-        // check for bcrypt errors
-        if (bcryptErr) {
-          return res
-            .status(400)
-            .json({ error: bcryptErr });
-        }
-
-        // check if password matches
-        if (!bcryptVerified) {
-          return res
-            .status(401)
-            .json({ error: 'Wrong password.' });
-        }
-
-        // exclude password
-        const tempUser = {
-          id: user.id,
-          username: user.username,
-          email: user.email
-        };
-
-        // create token
-        const token = jwt.sign(
-          tempUser,
-          process.env.JWT_SECRET,
-          { expiresIn: 3600 } // 1 hour
-        );
-
-        // return success and token
-        res.json({
-          message: 'Authentication succeded.',
-          token
-        });
-      });
-  });
+      if (
+        typeof error === 'object' &&
+        JSON.parse(error.message).type === 'APIError'
+      ) {
+        return res
+          .status(JSON.parse(error.message).code)
+          .json({ error: JSON.parse(error.message).message });
+      } else {
+        return res
+          .status(500)
+          .json({ error: error });
+      }
+    });
 };
 
 AuthenticationRouter.route('/authenticate')
-  .post(
-    validate,
-    handlePost
-  );
+  .post(validate, handlePost);
 
-export default AuthenticationRouter;
+module.exports = AuthenticationRouter;

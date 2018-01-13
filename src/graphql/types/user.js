@@ -1,6 +1,8 @@
+'use strict';
+
 /**
- * User module
- * @module types/user
+ * User type.
+ * @module
  */
 
 const User = `
@@ -11,4 +13,4 @@ const User = `
   }
 `;
 
-export default User;
+module.exports = User;

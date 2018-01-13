@@ -1,9 +1,11 @@
+'use strict';
+
 /**
- * Authentication middleware module.
- * @module middleware/authentication
+ * Authentication middleware.
+ * @module
  */
 
-import jwt from 'jsonwebtoken';
+const jwt = require('jsonwebtoken');
 
 /**
  * Handle token verification response
@@ -22,7 +24,7 @@ const handleVerificationResponse = (error, decoded) => error ? null : decoded;
  * @param {function} next - The callback.
  * @returns {function} - The callback.
  */
-export default function(req, res, next) {
+const authenticationMiddleware = (req, res, next) => {
   const token = req.headers['x-access-token'];
 
   req.user = token ?
@@ -30,4 +32,6 @@ export default function(req, res, next) {
     null;
 
   return next();
-}
+};
+
+module.exports = authenticationMiddleware;

@@ -1,9 +1,12 @@
+'use strict';
+
 /**
- * Types module
- * @module types
+ * Root types.
+ * @module
  */
 
-import Viewer from './viewer';
+const Viewer = require('./viewer');
+const UserToken = require('./userToken');
 
 const Query = `
   type Query {
@@ -16,7 +19,7 @@ const Mutation = `
     createUser(
       email: String!
       password: String!
-    ) : User
+    ) : UserToken
   }
 `;
 
@@ -27,8 +30,9 @@ const SchemaDefinition = `
   }
 `;
 
-export default [
+module.exports = [
   ...Viewer,
+  UserToken,
   Query,
   Mutation,
   SchemaDefinition

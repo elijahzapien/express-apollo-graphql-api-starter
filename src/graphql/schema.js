@@ -1,17 +1,16 @@
+'use strict';
+
 /**
- * GraphQL Schema
- * @module schema
+ * GraphQL Schema.
+ * @module
  */
 
-import { makeExecutableSchema } from 'graphql-tools';
+const { makeExecutableSchema } = require('graphql-tools');
 
-import typeDefs from './types';
-import resolvers from './resolvers';
+const typeDefs = require('./types');
+const resolvers = require('./resolvers');
 
-export default makeExecutableSchema({
+module.exports = makeExecutableSchema({
   typeDefs,
   resolvers,
-  //logger, // optional
-  //allowUndefinedInResolve = false, // optional
-  //resolverValidationOptions = {}, // optional
 });

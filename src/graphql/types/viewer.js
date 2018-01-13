@@ -1,9 +1,11 @@
+'use strict';
+
 /**
- * Viewer module
- * @module types/viewer
+ * Viewer type.
+ * @module
  */
 
-import User from './user';
+const User = require('./user');
 
 const Viewer = `
   type Viewer {
@@ -11,4 +13,4 @@ const Viewer = `
   }
 `;
 
-export default [User, Viewer];
+module.exports = [User, Viewer];
